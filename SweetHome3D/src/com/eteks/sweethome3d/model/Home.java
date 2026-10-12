@@ -158,6 +158,7 @@ public class Home implements Serializable, Cloneable {
         HomePieceOfFurniture.SortableProperty.WIDTH,
         HomePieceOfFurniture.SortableProperty.DEPTH,
         HomePieceOfFurniture.SortableProperty.HEIGHT,
+        HomePieceOfFurniture.SortableProperty.VOLUME,
         HomePieceOfFurniture.SortableProperty.VISIBLE});
     // Init transient lists and other fields
     init(true);
@@ -312,7 +313,7 @@ public class Home implements Serializable, Cloneable {
     initListenersSupport(this);
 
     if (this.furnitureVisibleProperties == null) {
-      // Set the furniture properties that were visible before version 0.19 
+      // Set the furniture properties that were visible before version 0.19
       this.furnitureVisibleProperties = Arrays.asList(new HomePieceOfFurniture.SortableProperty [] {
           HomePieceOfFurniture.SortableProperty.NAME,
           HomePieceOfFurniture.SortableProperty.WIDTH,
@@ -323,11 +324,11 @@ public class Home implements Serializable, Cloneable {
           HomePieceOfFurniture.SortableProperty.DOOR_OR_WINDOW,
           HomePieceOfFurniture.SortableProperty.VISIBLE});
     }
-    // Create a default top camera that matches default point of view 
-    this.topCamera = new Camera(50, 1050, 1010, 
+    // Create a default top camera that matches default point of view
+    this.topCamera = new Camera(50, 1050, 1010,
         (float)Math.PI, (float)Math.PI / 4, (float)Math.PI * 63 / 180);
     // Create a default observer camera (use a 63° field of view equivalent to a 35mm lens for a 24x36 film)
-    this.observerCamera = new ObserverCamera(50, 50, 170, 
+    this.observerCamera = new ObserverCamera(50, 50, 170,
         7 * (float)Math.PI / 4, (float)Math.PI / 16, (float)Math.PI * 63 / 180);
     this.storedCameras = Collections.emptyList();
     // Initialize new fields 
