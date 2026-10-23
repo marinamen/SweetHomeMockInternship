@@ -750,8 +750,7 @@ public class FurnitureTable extends JTable implements View, Printable {
           return headerRendererLabel;
         }
       };
-    for (int columnIndex = 0, n = columnModel.getColumnCount(); columnIndex < n; columnIndex++) {
-      final TableColumn tableColumn = columnModel.getColumn(columnIndex);
+    for (final TableColumn tableColumn : getPrintedColumns(columnModel)) {
       // Create a printable column from existing table column
       TableColumn printableColumn = new TableColumn();
       printableColumn.setIdentifier(tableColumn.getIdentifier());
@@ -780,6 +779,28 @@ public class FurnitureTable extends JTable implements View, Printable {
       printableColumnModel.addColumn(printableColumn);
     }    
     return print(g, pageFormat, pageIndex, printableColumnModel, Color.BLACK);
+  }
+  /**
+   * Returns the columns to print: the displayed columns, plus a Level column after
+   * the first column if the home has levels and that column isn't displayed.
+   */
+  private List<TableColumn> getPrintedColumns(TableColumnModel columnModel) {
+    List<TableColumn> printedColumns = new ArrayList<TableColumn>();
+    boolean levelColumnDisplayed = false;
+    for (int columnIndex = 0, n = columnModel.getColumnCount(); columnIndex < n; columnIndex++) {
+      TableColumn column = columnModel.getColumn(columnIndex);
+      printedColumns.add(column);
+      levelColumnDisplayed |= column.getIdentifier() == HomePieceOfFurniture.SortableProperty.LEVEL;
+    }
+    Home home = (Home)((FurnitureTreeTableModel)getModel()).getRoot();
+    if (!levelColumnDisplayed
+            && !home.getLevels().isEmpty()
+            && columnModel instanceof FurnitureTableColumnModel) {
+      TableColumn levelColumn = ((FurnitureTableColumnModel)columnModel).getAvailableColumn(
+              HomePieceOfFurniture.SortableProperty.LEVEL);
+      printedColumns.add(Math.min(1, printedColumns.size()), levelColumn);
+    }
+    return printedColumns;
   }
 
   /**
@@ -1017,7 +1038,9 @@ public class FurnitureTable extends JTable implements View, Printable {
       addLanguageListener(preferences);
       updateModelColumns(home.getFurnitureVisibleProperties());
     }
-
+    public TableColumn getAvailableColumn(HomePieceOfFurniture.SortableProperty property) {
+      return this.availableColumns.get(property);
+    }
     /**
      * Creates the list of available columns from furniture sortable properties.
      */
